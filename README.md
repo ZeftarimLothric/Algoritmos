@@ -13,15 +13,15 @@ ALGORITMOS
 ├── bin
 ├── lib
 ├── src
-│ └── Recursividad
-│ ├── Fibonacci.java
-│ ├── InvertirCadena.java
-│ └── TorresHanoi.java
+│ └── Recursividad/
+│   ├── Fibonacci.java
+│   ├── InvertirCadena.java
+│   └── TorresHanoi.java
 ├── Whatsapp_v0
-│ ├── cliente.java
-│ └── servidor.java
+│   ├── cliente.java
+│   └── servidor.java
 ├── Whatsapp_v1
-│ ├── cliente.java
-│ └── server.java
+│   ├── cliente.java
+│   └── server.java
 └── README.md
 ```
