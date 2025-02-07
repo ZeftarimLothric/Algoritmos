@@ -7,6 +7,7 @@ Este repositorio sera asignado a mi clase de Algoritmos para subir mis proyectos
 - `src`: Carpeta principal de archivos.
 - `lib`: Carpeta de librerias.
 
+```
 ALGORITMOS
 ├── vscode
 ├── bin
@@ -23,3 +24,4 @@ ALGORITMOS
 │ ├── cliente.java
 │ └── server.java
 └── README.md
+```
