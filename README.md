@@ -1,18 +1,27 @@
-## Getting Started
+## Proyecto de archivos de la clase de Algoritmos
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Este repositorio sera asignado a mi clase de Algoritmos para subir mis proyectos en Java.
 
-## Folder Structure
+## Estructura
 
-The workspace contains two folders by default, where:
+- `src`: Carpeta principal de archivos.
+- `lib`: Carpeta de librerias.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+```
+ALGORITMOS
+├── vscode
+├── bin
+├── lib
+├── src
+│ └── Recursividad
+│ ├── Fibonacci.java
+│ ├── InvertirCadena.java
+│ └── TorresHanoi.java
+├── Whatsapp_v0
+│ ├── cliente.java
+│ └── servidor.java
+├── Whatsapp_v1
+│ ├── cliente.java
+│ └── server.java
+└── README.md
+```
