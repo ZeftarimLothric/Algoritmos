@@ -1,0 +1,91 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PuntoDeVentaApp",
+            "request": "launch",
+            "mainClass": "ProyectoPuntoVenta.PuntoDeVentaApp",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "JavaFXVersion",
+            "request": "launch",
+            "mainClass": "JavaFXVersion",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Database",
+            "request": "launch",
+            "mainClass": "Basededatos.Database",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "Fibonacci",
+            "request": "launch",
+            "mainClass": "Recursividad.Fibonacci",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "InvertirCadena",
+            "request": "launch",
+            "mainClass": "Recursividad.InvertirCadena",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "TorresHanoi",
+            "request": "launch",
+            "mainClass": "Recursividad.TorresHanoi",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "cliente",
+            "request": "launch",
+            "mainClass": "Whatsapp_v0.cliente",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "servidor",
+            "request": "launch",
+            "mainClass": "Whatsapp_v0.servidor",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "cliente(1)",
+            "request": "launch",
+            "mainClass": "Whatsapp_v1.cliente",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "server",
+            "request": "launch",
+            "mainClass": "Whatsapp_v1.server",
+            "projectName": "Algoritmos_9b84cb4b"
+        },
+        {
+            "type": "java",
+            "name": "ordenamiento",
+            "request": "launch",
+            "mainClass": "ordenamiento",
+            "projectName": "Algoritmos_9b84cb4b"
+        }
+    ]
+}
