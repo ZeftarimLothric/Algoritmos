@@ -1,6 +1,7 @@
 package ProyectoPuntoVenta.Vistas;
 
 import ProyectoPuntoVenta.ProductManager;
+import ProyectoPuntoVenta.Clases.Producto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class AgregarProductoView extends JPanel {
         add(new JLabel("Seleccionar Producto:"));
         productosComboBox = new JComboBox<>();
         productosComboBox.addItem("Nuevo Producto");
-        for (AgregarProductosYCobroView.Producto producto : productoManager.getProductosDisponibles()) {
+        for (Producto producto : productoManager.getProductosDisponibles()) {
             productosComboBox.addItem(producto.getNombre());
         }
         productosComboBox.addActionListener(e -> seleccionarProducto());
@@ -60,7 +61,7 @@ public class AgregarProductoView extends JPanel {
     private void seleccionarProducto() {
         String nombreSeleccionado = (String) productosComboBox.getSelectedItem();
         if (nombreSeleccionado != null && !nombreSeleccionado.equals("Nuevo Producto")) {
-            for (AgregarProductosYCobroView.Producto producto : productoManager.getProductosDisponibles()) {
+            for (Producto producto : productoManager.getProductosDisponibles()) {
                 if (producto.getNombre().equals(nombreSeleccionado)) {
                     nombreField.setText(producto.getNombre());
                     codigoField.setText(producto.getCodigoBarras());
@@ -83,8 +84,8 @@ public class AgregarProductoView extends JPanel {
         double precio = Double.parseDouble(precioField.getText());
         int cantidad = Integer.parseInt(cantidadField.getText());
 
-        AgregarProductosYCobroView.Producto productoExistente = null;
-        for (AgregarProductosYCobroView.Producto producto : productoManager.getProductosDisponibles()) {
+        Producto productoExistente = null;
+        for (Producto producto : productoManager.getProductosDisponibles()) {
             if (producto.getNombre().equals(nombre)) {
                 productoExistente = producto;
                 break;
@@ -95,7 +96,7 @@ public class AgregarProductoView extends JPanel {
             productoExistente.setCantidad(productoExistente.getCantidad() + cantidad);
             productoManager.actualizarProducto(productoExistente);
         } else {
-            AgregarProductosYCobroView.Producto nuevoProducto = new AgregarProductosYCobroView.Producto(nombre, codigo, precio, cantidad);
+            Producto nuevoProducto = new Producto(nombre, codigo, precio, cantidad);
             productoManager.agregarProducto(nuevoProducto);
         }
 
@@ -107,8 +108,8 @@ public class AgregarProductoView extends JPanel {
 
     private void eliminarProducto() {
         String nombre = nombreField.getText();
-        AgregarProductosYCobroView.Producto productoExistente = null;
-        for (AgregarProductosYCobroView.Producto producto : productoManager.getProductosDisponibles()) {
+        Producto productoExistente = null;
+        for (Producto producto : productoManager.getProductosDisponibles()) {
             if (producto.getNombre().equals(nombre)) {
                 productoExistente = producto;
                 break;
@@ -125,6 +126,11 @@ public class AgregarProductoView extends JPanel {
             codigoField.setText("");
             precioField.setText("");
             cantidadField.setText("");
+
+            // Reiniciar AUTO_INCREMENT si no hay productos
+            if (productoManager.getProductosDisponibles().isEmpty()) {
+                productoManager.reiniciarAutoIncrement();
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Producto no encontrado.");
         }
@@ -133,7 +139,7 @@ public class AgregarProductoView extends JPanel {
     private void actualizarListaProductos() {
         productosComboBox.removeAllItems();
         productosComboBox.addItem("Nuevo Producto");
-        for (AgregarProductosYCobroView.Producto producto : productoManager.getProductosDisponibles()) {
+        for (Producto producto : productoManager.getProductosDisponibles()) {
             productosComboBox.addItem(producto.getNombre());
         }
     }

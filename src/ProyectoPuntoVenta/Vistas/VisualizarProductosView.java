@@ -1,6 +1,7 @@
 package ProyectoPuntoVenta.Vistas;
 
 import ProyectoPuntoVenta.ProductManager;
+import ProyectoPuntoVenta.Clases.Producto;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -43,7 +44,7 @@ public class VisualizarProductosView extends JPanel {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            AgregarProductosYCobroView.Producto producto = productoManager.getProductosDisponibles().get(rowIndex);
+            Producto producto = productoManager.getProductosDisponibles().get(rowIndex);
             switch (columnIndex) {
                 case 0:
                     return producto.getNombre();

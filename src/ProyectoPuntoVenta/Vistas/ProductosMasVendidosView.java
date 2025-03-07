@@ -1,6 +1,7 @@
 package ProyectoPuntoVenta.Vistas;
 
 import ProyectoPuntoVenta.ProductManager;
+import ProyectoPuntoVenta.Clases.Producto;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -30,7 +31,7 @@ public class ProductosMasVendidosView extends JPanel {
     private static class ProductosVendidosTableModel extends AbstractTableModel {
         private final ProductManager productoManager;
         private final String[] columnNames = {"Nombre", "Cantidad Vendida", "Ingresos"};
-        private List<Entry<AgregarProductosYCobroView.Producto, Integer>> productosVendidosOrdenados;
+        private List<Entry<Producto, Integer>> productosVendidosOrdenados;
 
         public ProductosVendidosTableModel(ProductManager productoManager) {
             this.productoManager = productoManager;
@@ -57,8 +58,8 @@ public class ProductosMasVendidosView extends JPanel {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            Entry<AgregarProductosYCobroView.Producto, Integer> entry = productosVendidosOrdenados.get(rowIndex);
-            AgregarProductosYCobroView.Producto producto = entry.getKey();
+            Entry<Producto, Integer> entry = productosVendidosOrdenados.get(rowIndex);
+            Producto producto = entry.getKey();
             int cantidadVendida = entry.getValue();
             switch (columnIndex) {
                 case 0:
