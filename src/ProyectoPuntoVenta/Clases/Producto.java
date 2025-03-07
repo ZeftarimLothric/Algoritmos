@@ -1,16 +1,30 @@
 package ProyectoPuntoVenta.Clases;
 
 public class Producto {
+    private int id;
     private String nombre;
     private String codigoBarras;
     private double precio;
     private int cantidad;
 
-    public Producto(String nombre, String codigoBarras, double precio, int cantidad) {
+    public Producto(int id, String nombre, String codigoBarras, double precio, int cantidad) {
+        this.id = id;
         this.nombre = nombre;
         this.codigoBarras = codigoBarras;
         this.precio = precio;
         this.cantidad = cantidad;
+    }
+
+    public Producto(String nombre, String codigoBarras, double precio, int cantidad) {
+        this(0, nombre, codigoBarras, precio, cantidad);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -39,19 +53,21 @@ public class Producto {
 
     @Override
     public String toString() {
-        return nombre + " - " + codigoBarras + " - $" + precio + " - Cantidad: " + cantidad;
+        return nombre + " - $" + precio;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Producto producto = (Producto) o;
-        return codigoBarras.equals(producto.codigoBarras);
+        return id == producto.id;
     }
 
     @Override
     public int hashCode() {
-        return codigoBarras.hashCode();
+        return Integer.hashCode(id);
     }
 }

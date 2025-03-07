@@ -14,10 +14,11 @@ public class AgregarProductoView extends JPanel {
     private JTextField cantidadField;
     private ProductManager productoManager;
     private VisualizarProductosView visualizarProductosView;
-    private AgregarProductosYCobroView agregarProductosYCobroView;
+    private CobroDeProductosView agregarProductosYCobroView;
 
     @SuppressWarnings("unused")
-    public AgregarProductoView(ProductManager productoManager, VisualizarProductosView visualizarProductosView, AgregarProductosYCobroView agregarProductosYCobroView) {
+    public AgregarProductoView(ProductManager productoManager, VisualizarProductosView visualizarProductosView,
+            CobroDeProductosView agregarProductosYCobroView) {
         this.productoManager = productoManager;
         this.visualizarProductosView = visualizarProductosView;
         this.agregarProductosYCobroView = agregarProductosYCobroView;
