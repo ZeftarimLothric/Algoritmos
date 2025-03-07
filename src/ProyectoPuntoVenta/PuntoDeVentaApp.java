@@ -1,13 +1,11 @@
 package ProyectoPuntoVenta;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import ProyectoPuntoVenta.Vistas.AgregarProductoView;
-import ProyectoPuntoVenta.Vistas.CobroDeProductosView;
-import ProyectoPuntoVenta.Vistas.ProductosMasVendidosView;
-import ProyectoPuntoVenta.Vistas.VisualizarProductosView;
+import ProyectoPuntoVenta.Vistas.LoginView;
+
+import java.io.File;
 
 import javax.swing.*;
-import java.io.File;
 
 public class PuntoDeVentaApp {
     public static void main(String[] args) {
@@ -18,37 +16,45 @@ public class PuntoDeVentaApp {
             e.printStackTrace();
         }
 
-        // Crear y mostrar la interfaz gráfica
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Punto de Venta");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
-
-            // Seleccionar la ruta de guardado al iniciar el programa
-            String rutaGuardado = seleccionarRutaGuardado(frame);
-            if (rutaGuardado == null) {
-                JOptionPane.showMessageDialog(frame, "Debe seleccionar una ruta de guardado para continuar.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                System.exit(1);
+        // Intentar establecer la conexión con la base de datos
+        ProductManager productoManager = null;
+        boolean connected = false;
+        while (!connected) {
+            productoManager = new ProductManager();
+            if (productoManager.isConnected()) {
+                connected = true;
+            } else {
+                int option = JOptionPane.showOptionDialog(null,
+                        "No se pudo conectar a la base de datos. ¿Desea volver a intentar?",
+                        "Error de conexión",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.ERROR_MESSAGE,
+                        null,
+                        new Object[] { "Volver a intentar", "Cerrar" },
+                        "Volver a intentar");
+                if (option == JOptionPane.NO_OPTION) {
+                    System.exit(1);
+                }
             }
+        }
 
-            ProductManager productoManager = new ProductManager();
+        // Mostrar mensaje para seleccionar la ruta de guardado
+        JOptionPane.showMessageDialog(null, "Selecciona la ruta de guardado de tickets digitales", "Información",
+                JOptionPane.INFORMATION_MESSAGE);
 
-            VisualizarProductosView visualizarProductosView = new VisualizarProductosView(productoManager);
-            ProductosMasVendidosView productosMasVendidosView = new ProductosMasVendidosView(productoManager);
-            CobroDeProductosView agregarProductosYCobroView = new CobroDeProductosView(productoManager,
-                    visualizarProductosView, productosMasVendidosView, rutaGuardado);
-            AgregarProductoView agregarProductoView = new AgregarProductoView(productoManager, visualizarProductosView,
-                    agregarProductosYCobroView);
+        // Seleccionar la ruta de guardado al iniciar el programa
+        JFrame frame = new JFrame("Punto de Venta");
+        String rutaGuardado = seleccionarRutaGuardado(frame);
+        if (rutaGuardado == null) {
+            JOptionPane.showMessageDialog(frame, "Debe seleccionar una ruta de guardado para continuar.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
 
-            JTabbedPane tabbedPane = new JTabbedPane();
-            tabbedPane.addTab("Agregar Producto", agregarProductoView);
-            tabbedPane.addTab("Cobro", agregarProductosYCobroView);
-            tabbedPane.addTab("Visualizar Productos", visualizarProductosView);
-            tabbedPane.addTab("Productos Más Vendidos", productosMasVendidosView);
-
-            frame.add(tabbedPane);
-            frame.setVisible(true);
+        // Mostrar la interfaz de login
+        final ProductManager finalProductoManager = productoManager;
+        SwingUtilities.invokeLater(() -> {
+            new LoginView(finalProductoManager, rutaGuardado).setVisible(true);
         });
     }
 

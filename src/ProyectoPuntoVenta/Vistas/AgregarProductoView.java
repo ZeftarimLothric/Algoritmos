@@ -5,6 +5,7 @@ import ProyectoPuntoVenta.Clases.Producto;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class AgregarProductoView extends JPanel {
     private JComboBox<String> productosComboBox;
@@ -15,6 +16,7 @@ public class AgregarProductoView extends JPanel {
     private ProductManager productoManager;
     private VisualizarProductosView visualizarProductosView;
     private CobroDeProductosView agregarProductosYCobroView;
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
     @SuppressWarnings("unused")
     public AgregarProductoView(ProductManager productoManager, VisualizarProductosView visualizarProductosView,
@@ -23,40 +25,80 @@ public class AgregarProductoView extends JPanel {
         this.visualizarProductosView = visualizarProductosView;
         this.agregarProductosYCobroView = agregarProductosYCobroView;
 
-        setLayout(new GridLayout(7, 2));
+        setLayout(new GridBagLayout());
+        setBackground(new Color(245, 245, 245));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        add(new JLabel("Seleccionar Producto:"));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        add(new JLabel("Seleccionar Producto:"), gbc);
         productosComboBox = new JComboBox<>();
         productosComboBox.addItem("Nuevo Producto");
         for (Producto producto : productoManager.getProductosDisponibles()) {
             productosComboBox.addItem(producto.getNombre());
         }
         productosComboBox.addActionListener(e -> seleccionarProducto());
-        add(productosComboBox);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        add(productosComboBox, gbc);
 
-        add(new JLabel("Nombre del Producto:"));
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 0.5;
+        add(new JLabel("Nombre del Producto:"), gbc);
         nombreField = new JTextField();
-        add(nombreField);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        add(nombreField, gbc);
 
-        add(new JLabel("Código de Barras:"));
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 0.5;
+        add(new JLabel("Código de Barras:"), gbc);
         codigoField = new JTextField();
-        add(codigoField);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        add(codigoField, gbc);
 
-        add(new JLabel("Precio:"));
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 0.5;
+        add(new JLabel("Precio:"), gbc);
         precioField = new JTextField();
-        add(precioField);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        add(precioField, gbc);
 
-        add(new JLabel("Cantidad:"));
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 0.5;
+        add(new JLabel("Cantidad:"), gbc);
         cantidadField = new JTextField();
-        add(cantidadField);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        add(cantidadField, gbc);
 
         JButton agregarButton = new JButton("Agregar Producto");
+        agregarButton.setBackground(new Color(0, 123, 255));
+        agregarButton.setForeground(Color.WHITE);
+        agregarButton.setFocusPainted(false);
         agregarButton.addActionListener(e -> agregarProducto());
-        add(agregarButton);
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(agregarButton, gbc);
 
         JButton eliminarButton = new JButton("Eliminar Producto");
+        eliminarButton.setBackground(new Color(220, 53, 69));
+        eliminarButton.setForeground(Color.WHITE);
+        eliminarButton.setFocusPainted(false);
         eliminarButton.addActionListener(e -> eliminarProducto());
-        add(eliminarButton);
+        gbc.gridy++;
+        add(eliminarButton, gbc);
     }
 
     private void seleccionarProducto() {
@@ -66,7 +108,7 @@ public class AgregarProductoView extends JPanel {
                 if (producto.getNombre().equals(nombreSeleccionado)) {
                     nombreField.setText(producto.getNombre());
                     codigoField.setText(producto.getCodigoBarras());
-                    precioField.setText(String.valueOf(producto.getPrecio()));
+                    precioField.setText(decimalFormat.format(producto.getPrecio()));
                     cantidadField.setText(String.valueOf(producto.getCantidad()));
                     break;
                 }

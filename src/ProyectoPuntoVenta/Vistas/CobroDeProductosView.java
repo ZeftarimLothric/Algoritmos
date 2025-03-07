@@ -2,21 +2,20 @@ package ProyectoPuntoVenta.Vistas;
 
 import ProyectoPuntoVenta.ProductManager;
 import ProyectoPuntoVenta.Clases.Producto;
+import ProyectoPuntoVenta.Clases.Usuario;
 
 import javax.print.*;
 import javax.print.attribute.*;
 import javax.print.attribute.standard.Copies;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,15 +25,17 @@ public class CobroDeProductosView extends JPanel {
     private DefaultListModel<String> carritoModel;
     private JLabel totalLabel;
     private Map<Producto, Integer> carrito;
-    private DefaultListModel<String> productosModel;
+    private DefaultListModel<Producto> productosModel;
     private VisualizarProductosView visualizarProductosView;
     @SuppressWarnings("unused")
     private ProductosMasVendidosView productosMasVendidosView;
     private ProductManager productoManager;
     private String rutaGuardado;
-    private JComboBox<Producto> productosComboBox;
-    private JTextField cantidadField;
+    private JList<Producto> productosList;
+    private JList<String> carritoList;
     private JLabel productoInfoLabel;
+    private JLabel usuarioLabel;
+    private DecimalFormat decimalFormat;
 
     @SuppressWarnings("unused")
     public CobroDeProductosView(ProductManager productoManager, VisualizarProductosView visualizarProductosView,
@@ -43,26 +44,23 @@ public class CobroDeProductosView extends JPanel {
         this.visualizarProductosView = visualizarProductosView;
         this.productosMasVendidosView = productosMasVendidosView;
         this.rutaGuardado = rutaGuardado;
+        this.decimalFormat = new DecimalFormat("#.00");
 
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(245, 245, 245));
 
         // Panel para mostrar productos disponibles
-        JPanel productosPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        JPanel productosPanel = new JPanel(new BorderLayout(10, 10));
+        productosPanel.setBackground(new Color(245, 245, 245));
 
         productosModel = new DefaultListModel<>();
         for (Producto producto : productoManager.getProductosDisponibles()) {
-            productosModel.addElement(producto.toString());
+            productosModel.addElement(producto);
         }
-        productosComboBox = new JComboBox<>();
-        for (Producto producto : productoManager.getProductosDisponibles()) {
-            productosComboBox.addItem(producto);
-        }
-        productosComboBox.setRenderer(new DefaultListCellRenderer() {
+        productosList = new JList<>(productosModel);
+        productosList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        productosList.setFont(new Font("Arial", Font.PLAIN, 14));
+        productosList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                     boolean cellHasFocus) {
@@ -74,66 +72,61 @@ public class CobroDeProductosView extends JPanel {
                 return c;
             }
         });
-        productosComboBox.setPreferredSize(new Dimension(200, 25)); // Ajustar la altura del JComboBox
-        productosComboBox.addActionListener(new ActionListener() {
+        productosList.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Producto producto = (Producto) productosComboBox.getSelectedItem();
-                if (producto != null) {
-                    productoInfoLabel.setText(
-                            "Precio: $" + producto.getPrecio() + " | Cantidad disponible: " + producto.getCantidad());
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int index = productosList.locationToIndex(e.getPoint());
+                    productosList.setSelectedIndex(index);
+                    Producto producto = productosList.getSelectedValue();
+                    if (producto != null) {
+                        showPopupMenu(e, producto);
+                    }
+                } else if (e.getClickCount() == 2) {
+                    Producto producto = productosList.getSelectedValue();
+                    if (producto != null) {
+                        agregarProductoAlCarrito(producto, 1);
+                    }
+                } else {
+                    Producto producto = productosList.getSelectedValue();
+                    if (producto != null) {
+                        productoInfoLabel.setText(
+                                "Precio: $" + producto.getPrecio() + " | Cantidad disponible: "
+                                        + producto.getCantidad());
+                    }
                 }
             }
         });
-        productosPanel.add(new JLabel("Seleccionar Producto:"), gbc);
-        gbc.gridy++;
-        productosPanel.add(productosComboBox, gbc);
-
-        // Campo de entrada para la cantidad
-        gbc.gridy++;
-        productosPanel.add(new JLabel("Cantidad:"), gbc);
-        cantidadField = new JTextField();
-        cantidadField.setPreferredSize(new Dimension(200, 25)); // Ajustar la altura del campo de entrada
-        gbc.gridy++;
-        productosPanel.add(cantidadField, gbc);
-
-        // Botón para agregar el producto con la cantidad especificada
-        JButton agregarButton = new JButton("Agregar");
-        agregarButton.addActionListener(e -> {
-            Producto producto = (Producto) productosComboBox.getSelectedItem();
-            int cantidad;
-            try {
-                cantidad = Integer.parseInt(cantidadField.getText());
-                if (cantidad <= 0) {
-                    throw new NumberFormatException();
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Por favor, ingrese una cantidad válida.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            agregarProductoAlCarrito(producto, cantidad);
-        });
-        gbc.gridy++;
-        productosPanel.add(agregarButton, gbc);
+        JScrollPane productosScrollPane = new JScrollPane(productosList);
+        productosPanel.add(productosScrollPane, BorderLayout.CENTER);
 
         // Label para mostrar información adicional del producto
         productoInfoLabel = new JLabel("Seleccione un producto para ver más información.");
-        gbc.gridy++;
-        productosPanel.add(productoInfoLabel, gbc);
+        productoInfoLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        productosPanel.add(productoInfoLabel, BorderLayout.SOUTH);
 
         add(productosPanel, BorderLayout.WEST);
 
         // Panel para mostrar el carrito de compras
         carritoModel = new DefaultListModel<>();
-        JList<String> carritoList = new JList<>(carritoModel);
+        carritoList = new JList<>(carritoModel);
+        carritoList.setBackground(new Color(255, 255, 255));
+        carritoList.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        carritoList.setFont(new Font("Arial", Font.PLAIN, 14));
         carritoList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int index = carritoList.locationToIndex(e.getPoint());
+                    carritoList.setSelectedIndex(index);
+                    Producto producto = (Producto) carrito.keySet().toArray()[index];
+                    if (producto != null) {
+                        showCarritoPopupMenu(e, producto);
+                    }
+                } else if (e.getClickCount() == 2) {
                     int index = carritoList.locationToIndex(e.getPoint());
                     Producto producto = (Producto) carrito.keySet().toArray()[index];
-                    eliminarProductoDelCarrito(producto);
+                    eliminarProductoDelCarrito(producto, 1);
                 }
             }
         });
@@ -142,10 +135,18 @@ public class CobroDeProductosView extends JPanel {
 
         // Panel para mostrar el total y realizar el cobro
         JPanel cobroPanel = new JPanel(new BorderLayout());
+        cobroPanel.setBackground(new Color(245, 245, 245));
         totalLabel = new JLabel("Total: $0.00");
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        totalLabel.setForeground(new Color(0, 123, 255));
+        totalLabel.setHorizontalAlignment(SwingConstants.CENTER);
         cobroPanel.add(totalLabel, BorderLayout.NORTH);
 
         JButton cobrarButton = new JButton("Cobrar");
+        cobrarButton.setBackground(new Color(40, 167, 69));
+        cobrarButton.setForeground(Color.WHITE);
+        cobrarButton.setFocusPainted(false);
+        cobrarButton.setFont(new Font("Arial", Font.BOLD, 16));
         cobroPanel.add(cobrarButton, BorderLayout.SOUTH);
 
         add(cobroPanel, BorderLayout.SOUTH);
@@ -170,6 +171,60 @@ public class CobroDeProductosView extends JPanel {
                 productosMasVendidosView.actualizarTabla();
             }
         });
+
+        // Mostrar el nombre del usuario que inició sesión
+        Usuario usuarioActual = productoManager.getUsuarioActual();
+        if (usuarioActual != null) {
+            usuarioLabel = new JLabel("Usuario: " + usuarioActual.getNombre());
+            usuarioLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            usuarioLabel.setForeground(new Color(0, 123, 255));
+            usuarioLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            add(usuarioLabel, BorderLayout.NORTH);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private void showPopupMenu(MouseEvent e, Producto producto) {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem addItem1 = new JMenuItem("Agregar 1");
+        addItem1.addActionListener(event -> agregarProductoAlCarrito(producto, 1));
+        popupMenu.add(addItem1);
+
+        JMenuItem addItem2 = new JMenuItem("Agregar 2");
+        addItem2.addActionListener(event -> agregarProductoAlCarrito(producto, 2));
+        popupMenu.add(addItem2);
+
+        JMenuItem addItem5 = new JMenuItem("Agregar 5");
+        addItem5.addActionListener(event -> agregarProductoAlCarrito(producto, 5));
+        popupMenu.add(addItem5);
+
+        JMenuItem addItem10 = new JMenuItem("Agregar 10");
+        addItem10.addActionListener(event -> agregarProductoAlCarrito(producto, 10));
+        popupMenu.add(addItem10);
+
+        popupMenu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    @SuppressWarnings("unused")
+    private void showCarritoPopupMenu(MouseEvent e, Producto producto) {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem removeItem1 = new JMenuItem("Quitar 1");
+        removeItem1.addActionListener(event -> eliminarProductoDelCarrito(producto, 1));
+        popupMenu.add(removeItem1);
+
+        JMenuItem removeItem2 = new JMenuItem("Quitar 2");
+        removeItem2.addActionListener(event -> eliminarProductoDelCarrito(producto, 2));
+        popupMenu.add(removeItem2);
+
+        JMenuItem removeItem5 = new JMenuItem("Quitar 5");
+        removeItem5.addActionListener(event -> eliminarProductoDelCarrito(producto, 5));
+        popupMenu.add(removeItem5);
+
+        JMenuItem removeAll = new JMenuItem("Quitar todos");
+        removeAll.addActionListener(event -> eliminarProductoDelCarrito(producto, carrito.get(producto)));
+        popupMenu.add(removeAll);
+
+        popupMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
     private void agregarProductoAlCarrito(Producto producto, int cantidad) {
@@ -186,15 +241,15 @@ public class CobroDeProductosView extends JPanel {
         }
     }
 
-    private void eliminarProductoDelCarrito(Producto producto) {
+    private void eliminarProductoDelCarrito(Producto producto, int cantidad) {
         if (carrito.containsKey(producto)) {
-            int cantidad = carrito.get(producto);
-            if (cantidad > 1) {
-                carrito.put(producto, cantidad - 1);
+            int cantidadEnCarrito = carrito.get(producto);
+            if (cantidadEnCarrito > cantidad) {
+                carrito.put(producto, cantidadEnCarrito - cantidad);
             } else {
                 carrito.remove(producto);
             }
-            producto.setCantidad(producto.getCantidad() + 1);
+            producto.setCantidad(producto.getCantidad() + cantidad);
             productoManager.actualizarProducto(producto);
             actualizarCarrito();
             actualizarProductosDisponibles();
@@ -215,12 +270,12 @@ public class CobroDeProductosView extends JPanel {
     private void actualizarProductosDisponibles() {
         productosModel.clear();
         for (Producto producto : productoManager.getProductosDisponibles()) {
-            productosModel.addElement(producto.toString());
+            productosModel.addElement(producto);
         }
     }
 
     private void actualizarTotal() {
-        totalLabel.setText("Total: $" + calcularTotal());
+        totalLabel.setText("Total: $" + decimalFormat.format(calcularTotal()));
     }
 
     private double calcularTotal() {
@@ -252,7 +307,8 @@ public class CobroDeProductosView extends JPanel {
         sb.append("================================\n");
         sb.append("          TICKET DE COMPRA      \n");
         sb.append("================================\n");
-        sb.append("Fecha y Hora: ").append(fechaHora).append("\n");
+        sb.append(fechaHora).append("\n");
+        sb.append("Por: ").append(productoManager.getUsuarioActual().getNombre()).append("\n");
         sb.append("================================\n");
         for (Map.Entry<Producto, Integer> entry : carrito.entrySet()) {
             Producto producto = entry.getKey();
@@ -260,8 +316,8 @@ public class CobroDeProductosView extends JPanel {
             String nombreProducto = producto.getNombre();
             String lineaProducto = String.format("%-20s %3d x %6.2f", nombreProducto, cantidad, producto.getPrecio());
             if (lineaProducto.length() > 32) {
-                if (nombreProducto.length() > 20) {
-                    nombreProducto = nombreProducto.substring(0, 20) + "...";
+                if (nombreProducto.length() > 15) {
+                    nombreProducto = nombreProducto.substring(0, 15) + "...";
                 }
                 lineaProducto = String.format("%-20s %3d x %6.2f", nombreProducto, cantidad, producto.getPrecio());
             }

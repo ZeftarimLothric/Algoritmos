@@ -6,16 +6,21 @@ import ProyectoPuntoVenta.Clases.Producto;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class VisualizarProductosView extends JPanel {
     private JTable table;
     private ProductosTableModel tableModel;
 
     public VisualizarProductosView(ProductManager productoManager) {
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(245, 245, 245));
 
         tableModel = new ProductosTableModel(productoManager);
         table = new JTable(tableModel);
+        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        table.setRowHeight(30);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -26,7 +31,8 @@ public class VisualizarProductosView extends JPanel {
 
     private static class ProductosTableModel extends AbstractTableModel {
         private final ProductManager productoManager;
-        private final String[] columnNames = {"Nombre", "Código de Barras", "Precio", "Cantidad"};
+        private final String[] columnNames = { "Nombre", "Código de Barras", "Precio", "Cantidad" };
+        private final DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
         public ProductosTableModel(ProductManager productoManager) {
             this.productoManager = productoManager;
@@ -51,7 +57,7 @@ public class VisualizarProductosView extends JPanel {
                 case 1:
                     return producto.getCodigoBarras();
                 case 2:
-                    return producto.getPrecio();
+                    return decimalFormat.format(producto.getPrecio());
                 case 3:
                     return producto.getCantidad();
                 default:

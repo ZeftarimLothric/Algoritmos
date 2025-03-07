@@ -17,10 +17,13 @@ CREATE TABLE productos_vendidos (
     FOREIGN KEY (producto_id) REFERENCES productos(id)
 );
 
-SELECT * FROM punto_de_venta.productos;
-SELECT * FROM punto_de_venta.productos_vendidos;
-
-ALTER TABLE productos AUTO_INCREMENT = 1;
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    importe_total DOUBLE DEFAULT 0
+);
 
 INSERT INTO Productos (Nombre, codigo_barras, precio, cantidad) VALUES
 ('Camiseta Roja', '1234567890123', 20.99, 50),
@@ -33,3 +36,11 @@ INSERT INTO Productos (Nombre, codigo_barras, precio, cantidad) VALUES
 ('Pulsera de Cuero', '1234567890130', 12.00, 75),
 ('Reloj Deportivo', '1234567890131', 30.00, 60),
 ('Auriculares Bluetooth', '1234567890132', 25.99, 35);
+
+ALTER TABLE productos AUTO_INCREMENT = 1;
+
+SELECT * FROM punto_de_venta.productos;
+SELECT * FROM punto_de_venta.productos_vendidos;
+
+
+
